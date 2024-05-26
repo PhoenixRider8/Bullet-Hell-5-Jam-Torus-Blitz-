@@ -1,0 +1,109 @@
+[gd_scene load_steps=16 format=3 uid="uid://d3usb8i2edftn"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_tc8v1"]
+[ext_resource type="Texture2D" uid="uid://dwalplud3pa8g" path="res://assets/player/player_attack.png" id="1_tgq8u"]
+[ext_resource type="Texture2D" uid="uid://bjgw3mjdrc58y" path="res://assets/player/player.png" id="2_iikg7"]
+[ext_resource type="Script" path="res://scripts/EnemySprite.gd" id="4_liru0"]
+[ext_resource type="PackedScene" uid="uid://ddiefnlko3sb" path="res://scenes/health_bar.tscn" id="4_p3f1k"]
+[ext_resource type="AudioStream" uid="uid://bqalbthq11rxq" path="res://assets/sounds/laserShoot.wav" id="5_rnowx"]
+[ext_resource type="AudioStream" uid="uid://byqgggnqtcy" path="res://assets/sounds/hitHurt.wav" id="6_nb5ug"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e3thw"]
+atlas = ExtResource("1_tgq8u")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gdn0d"]
+atlas = ExtResource("1_tgq8u")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x1kft"]
+atlas = ExtResource("1_tgq8u")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jea2j"]
+atlas = ExtResource("1_tgq8u")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_epla0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e3thw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gdn0d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x1kft")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jea2j")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_iikg7")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_g7b3y"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 2
+particles_anim_v_frames = 2
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_gav3s"]
+offsets = PackedFloat32Array(0, 0.252119, 0.563559, 0.798729, 1)
+colors = PackedColorArray(1, 0, 0, 1, 0.865698, 0.435784, 0.170565, 1, 0.754939, 0.770222, 0.0973849, 1, 0, 0, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0klfg"]
+radius = 14.0
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_tc8v1")
+
+[node name="PlayerSprite" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, 1)
+scale = Vector2(0.90625, 0.921875)
+sprite_frames = SubResource("SpriteFrames_epla0")
+animation = &"attack"
+script = ExtResource("4_liru0")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+y_sort_enabled = true
+material = SubResource("CanvasItemMaterial_g7b3y")
+position = Vector2(0, 22)
+amount = 100
+lifetime = 0.3
+emission_shape = 1
+emission_sphere_radius = 6.78
+direction = Vector2(0, 0)
+scale_amount_min = 0.0
+scale_amount_max = 4.84
+color_ramp = SubResource("Gradient_gav3s")
+
+[node name="HealthBar" parent="." instance=ExtResource("4_p3f1k")]
+offset_left = -59.0
+offset_top = 72.0
+offset_right = 60.0
+offset_bottom = 76.0
+
+[node name="hit" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("CircleShape2D_0klfg")
+
+[node name="sounds" type="Node" parent="."]
+
+[node name="attack" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("5_rnowx")
+
+[node name="death" type="AudioStreamPlayer" parent="sounds"]
+stream = ExtResource("6_nb5ug")

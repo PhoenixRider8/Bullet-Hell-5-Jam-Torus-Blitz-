@@ -1,0 +1,92 @@
+[gd_scene load_steps=16 format=3 uid="uid://cknpdwv7amiio"]
+
+[ext_resource type="Script" path="res://scripts/healer.gd" id="1_devi6"]
+[ext_resource type="Texture2D" uid="uid://tno6xoa2eftd" path="res://assets/ally(or maybe)/ally_angry.png" id="1_fyp1i"]
+[ext_resource type="PackedScene" uid="uid://d3usb8i2edftn" path="res://scenes/player.tscn" id="2_4o7lt"]
+[ext_resource type="Texture2D" uid="uid://isg71mxn0230" path="res://assets/ally(or maybe)/ally_happy.png" id="2_g6mdn"]
+[ext_resource type="Texture2D" uid="uid://biq6ka1nokpsk" path="res://assets/ally(or maybe)/heal.png" id="5_8upx4"]
+[ext_resource type="Script" path="res://scripts/HealerSprite.gd" id="5_kl5dv"]
+[ext_resource type="PackedScene" uid="uid://ddiefnlko3sb" path="res://scenes/health_bar.tscn" id="5_yv284"]
+[ext_resource type="PackedScene" uid="uid://dybtslnaa8ads" path="res://scenes/fire_explosion.tscn" id="6_m2u38"]
+[ext_resource type="AudioStream" uid="uid://cfgt0vsxlu3oo" path="res://assets/sounds/powerUp.wav" id="9_6v8np"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nt72k"]
+radius = 37.1214
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7raeg"]
+atlas = ExtResource("5_8upx4")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_84312"]
+atlas = ExtResource("5_8upx4")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gsfls"]
+atlas = ExtResource("5_8upx4")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rgdo1"]
+atlas = ExtResource("5_8upx4")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ld1rx"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_fyp1i")
+}],
+"loop": true,
+"name": &"angry",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_g6mdn")
+}],
+"loop": true,
+"name": &"happy",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7raeg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_84312")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gsfls")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rgdo1")
+}],
+"loop": false,
+"name": &"heal",
+"speed": 5.0
+}]
+
+[node name="Healer" type="Area2D"]
+script = ExtResource("1_devi6")
+player_scene = ExtResource("2_4o7lt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_nt72k")
+
+[node name="HealerSprite" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+sprite_frames = SubResource("SpriteFrames_ld1rx")
+animation = &"happy"
+script = ExtResource("5_kl5dv")
+deathParticle = ExtResource("6_m2u38")
+
+[node name="HealthBar" parent="." instance=ExtResource("5_yv284")]
+offset_left = -23.0
+offset_top = -28.0
+offset_right = 26.0
+offset_bottom = -25.0
+
+[node name="heal" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_6v8np")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

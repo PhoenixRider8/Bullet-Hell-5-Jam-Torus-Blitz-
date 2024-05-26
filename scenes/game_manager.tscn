@@ -1,0 +1,185 @@
+[gd_scene load_steps=15 format=3 uid="uid://c0ir03h2v0oyl"]
+
+[ext_resource type="PackedScene" uid="uid://d3usb8i2edftn" path="res://scenes/player.tscn" id="1_5rmqg"]
+[ext_resource type="Texture2D" uid="uid://dysw8dtkqridf" path="res://assets/background/bg.png" id="1_6ccuy"]
+[ext_resource type="Script" path="res://scripts/game_control.gd" id="1_dymbi"]
+[ext_resource type="Texture2D" uid="uid://clovcyhi1vv8w" path="res://assets/background/vfx textures/floaty_32.png" id="2_1jwhu"]
+[ext_resource type="Script" path="res://scripts/ParticleFollow.gd" id="3_66u0h"]
+[ext_resource type="PackedScene" uid="uid://dwbb1blelc8lb" path="res://scenes/enemy_spawner.tscn" id="6_sfvcq"]
+[ext_resource type="AudioStream" uid="uid://dp4vhfdnl6uev" path="res://assets/sounds/gameMusic.mp3" id="7_2gtdr"]
+[ext_resource type="FontFile" uid="uid://rjairhllbecq" path="res://assets/font files/Vermin Vibes 1989.ttf" id="8_8yh2a"]
+[ext_resource type="Script" path="res://scripts/Death.gd" id="8_45iq1"]
+
+[sub_resource type="Curve2D" id="Curve2D_lasna"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 77.6306, 245.164, -9.43874, 103.826, 9.43874, -103.826, 173, 109, 0, 0, 0, 0, 65, -60.4064, 60.0236, -45.8576, -60.0236, 45.8576, -72.3777, -36.1142, -22.5042, -43.4441, 22.5042, 43.4441, -106.154, 171.648, -14.0651, 16.8949, 14.0651, -16.8949, 76.6371, 243.886, 0, 0, 0, 0, 77.6306, 245.164)
+}
+point_count = 7
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_31dut"]
+blend_mode = 1
+particles_animation = true
+particles_anim_h_frames = 7
+particles_anim_v_frames = 7
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_jauda"]
+offsets = PackedFloat32Array(0, 0.228669, 0.47099, 0.761092, 1)
+colors = PackedColorArray(0.00044983, 0.282223, 0.889502, 1, 0.658775, 0.726049, 0.091896, 1, 0.997952, 0.695836, 0.469865, 1, 0, 0.719918, 0.262154, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_q1lrh"]
+gradient = SubResource("Gradient_jauda")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_txkw2"]
+particle_flag_disable_z = true
+angle_max = 53.0
+angular_velocity_min = 100.0
+angular_velocity_max = 300.0
+radial_velocity_min = 50.0
+radial_velocity_max = 187.93
+gravity = Vector3(0, -100, 0)
+color = Color(0.799084, 0.775233, 0.991367, 1)
+color_ramp = SubResource("GradientTexture1D_q1lrh")
+anim_speed_max = 1.0
+anim_offset_min = 0.0145
+anim_offset_max = 0.0145
+
+[node name="GameManager" type="Node2D"]
+script = ExtResource("1_dymbi")
+
+[node name="Bg" type="Sprite2D" parent="."]
+position = Vector2(574, 447)
+texture = ExtResource("1_6ccuy")
+
+[node name="ParticleSystem" type="Node" parent="."]
+
+[node name="CurvePath" type="Path2D" parent="ParticleSystem"]
+position = Vector2(480, 137)
+scale = Vector2(3.22588, 1.42879)
+curve = SubResource("Curve2D_lasna")
+
+[node name="ParticleFollow" type="PathFollow2D" parent="ParticleSystem/CurvePath"]
+position = Vector2(77.6306, 245.164)
+rotation = -0.959801
+script = ExtResource("3_66u0h")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="ParticleSystem/CurvePath/ParticleFollow"]
+material = SubResource("CanvasItemMaterial_31dut")
+rotation = 0.959802
+scale = Vector2(0.496716, 0.639269)
+amount = 138
+process_material = SubResource("ParticleProcessMaterial_txkw2")
+texture = ExtResource("2_1jwhu")
+randomness = 0.72
+
+[node name="Torus_Collection" type="Node" parent="."]
+
+[node name="Enemy_Collection" type="Node" parent="."]
+
+[node name="Healer_Collection" type="Node" parent="."]
+
+[node name="EnemySpawner" parent="." instance=ExtResource("6_sfvcq")]
+
+[node name="Player" parent="." instance=ExtResource("1_5rmqg")]
+position = Vector2(579, 554)
+
+[node name="ScoreSystem" type="Node" parent="."]
+
+[node name="Score" type="Label" parent="ScoreSystem"]
+offset_right = 192.0
+offset_bottom = 63.0
+theme_override_font_sizes/font_size = 46
+text = "SCORE :"
+
+[node name="Points" type="Label" parent="ScoreSystem"]
+offset_left = 178.0
+offset_top = -9.0
+offset_right = 310.0
+offset_bottom = 75.0
+theme_override_font_sizes/font_size = 61
+text = "0"
+
+[node name="GameMusic" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("7_2gtdr")
+autoplay = true
+
+[node name="Boundary" type="StaticBody2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Boundary"]
+polygon = PackedVector2Array(40, 640, 44, -36, -26, -31, -20, 724, 1220, 719, 1213, -61, 1107, -39, 1105, 645)
+
+[node name="Death" type="Control" parent="."]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1153.0
+offset_bottom = 681.0
+script = ExtResource("8_45iq1")
+
+[node name="ColorRect" type="ColorRect" parent="Death"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.921569, 0, 0.356863, 0.776471)
+
+[node name="Label" type="Label" parent="Death"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -208.5
+offset_top = -112.5
+offset_right = 240.5
+offset_bottom = 10.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("8_8yh2a")
+theme_override_font_sizes/font_size = 151
+text = "YOU DEAD"
+
+[node name="PlayAgain" type="Button" parent="Death"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -133.5
+offset_top = 39.5
+offset_right = 155.5
+offset_bottom = 96.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.477535, 0.867943, 1.54018e-06, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_8yh2a")
+theme_override_font_sizes/font_size = 56
+text = "PLAY AGAIN"
+
+[node name="Quit" type="Button" parent="Death"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -133.5
+offset_top = -203.0
+offset_right = 155.5
+offset_bottom = -146.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.477535, 0.867943, 1.54018e-06, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_8yh2a")
+theme_override_font_sizes/font_size = 56
+text = "QUIT"
+
+[connection signal="pressed" from="Death/PlayAgain" to="Death" method="_on_play_again_pressed"]
+[connection signal="pressed" from="Death/Quit" to="Death" method="_on_quit_pressed"]

@@ -1,0 +1,73 @@
+[gd_scene load_steps=12 format=3 uid="uid://uyct3pvbqqlr"]
+
+[ext_resource type="Texture2D" uid="uid://cyefo8xunmb7n" path="res://assets/enemy/enemy.png" id="1_8gosd"]
+[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_xc4v8"]
+[ext_resource type="Script" path="res://scripts/EnemySprite.gd" id="3_n5w40"]
+[ext_resource type="PackedScene" uid="uid://ddiefnlko3sb" path="res://scenes/health_bar.tscn" id="3_yg7hd"]
+[ext_resource type="PackedScene" uid="uid://dybtslnaa8ads" path="res://scenes/fire_explosion.tscn" id="4_37qqe"]
+[ext_resource type="AudioStream" uid="uid://byqgggnqtcy" path="res://assets/sounds/hitHurt.wav" id="6_50gdu"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bxn7q"]
+atlas = ExtResource("1_8gosd")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sfb46"]
+atlas = ExtResource("1_8gosd")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ra52n"]
+atlas = ExtResource("1_8gosd")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mw5p1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bxn7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sfb46")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ra52n")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ut4wu"]
+radius = 22.0907
+
+[node name="Enemy" type="Area2D"]
+script = ExtResource("1_xc4v8")
+
+[node name="EnemySprite" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+scale = Vector2(0.664063, 0.648438)
+sprite_frames = SubResource("SpriteFrames_mw5p1")
+animation = &"idle"
+frame_progress = 0.566941
+script = ExtResource("3_n5w40")
+deathParticle = ExtResource("4_37qqe")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 12)
+shape = SubResource("CircleShape2D_ut4wu")
+
+[node name="Shoot Timer" type="Timer" parent="."]
+
+[node name="Rotator" type="Node2D" parent="."]
+position = Vector2(0, 23)
+
+[node name="HealthBar" parent="." instance=ExtResource("3_yg7hd")]
+offset_left = -121.0
+offset_top = -68.0
+offset_right = 119.0
+offset_bottom = -64.0
+
+[node name="death" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_50gdu")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="timeout" from="Shoot Timer" to="." method="_on_shoot_timer_timeout"]

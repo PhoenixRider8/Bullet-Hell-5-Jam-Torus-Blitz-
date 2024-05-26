@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://7pdt5h04kg3n"]
+
+[ext_resource type="Script" path="res://scripts/torus.gd" id="1_h5v6k"]
+[ext_resource type="Texture2D" uid="uid://c4i1tg472vp6i" path="res://assets/bullets/player_bullet/playerBullet.png" id="1_hs536"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xprlt"]
+radius = 12.1655
+
+[node name="Torus" type="Area2D"]
+script = ExtResource("1_h5v6k")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_hs536")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_xprlt")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
